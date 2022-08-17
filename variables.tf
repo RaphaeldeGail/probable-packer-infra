@@ -1,19 +1,13 @@
-variable "project" {
-  type        = string
-  description = "The GCP **project** that will be used to create the packer build infra."
-}
-
-variable "region" {
-  type        = string
-  description = "The GCP **region** that will be used to create the packer build network."
-}
-
-variable "name" {
-  type        = string
-  description = "The **name** of the packer build that will be used for reference. Only lowercase letters are allowed."
+variable "workspace" {
+  type = object({
+    name    = string
+    project = string
+    region  = string
+  })
+  description = "The workspace that will be created on GCP. Requires the **name** of the build (e.g \"bounce\"), the ID of a GCP **project** and the **region** of deployment on GCP. The **name** attributes must contain only lowercase letters."
 
   validation {
-    condition     = can(regex("^[a-z]*$", var.name))
-    error_message = "The packer build name should be a valid name with only lowercase letters allowed."
+    condition     = can(regex("^[a-z]*$", var.workspace.name))
+    error_message = "The name of the build should be a valid name with only lowercase letters allowed."
   }
 }

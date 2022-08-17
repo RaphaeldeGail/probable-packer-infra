@@ -43,8 +43,8 @@ terraform {
 }
 
 provider "google" {
-  project = var.project
-  region  = var.region
+  project = var.workspace.project
+  region  = var.workspace.region
 }
 
 locals {
@@ -53,7 +53,7 @@ locals {
 }
 
 resource "google_compute_network" "network" {
-  name        = join("-", [var.name, "network"])
+  name        = join("-", [var.workspace.name, "network"])
   description = "Main network for the packer build."
 
   auto_create_subnetworks         = false
@@ -62,7 +62,7 @@ resource "google_compute_network" "network" {
 }
 
 resource "google_compute_subnetwork" "subnetwork" {
-  name        = join("-", [var.name, "subnet"])
+  name        = join("-", [var.workspace.name, "subnet"])
   description = "Subnetwork hosting packer instance."
 
   network       = google_compute_network.network.id
@@ -70,19 +70,19 @@ resource "google_compute_subnetwork" "subnetwork" {
 }
 
 resource "google_compute_route" "default_route" {
-  name        = join("-", ["from", var.name, "to", "internet"])
+  name        = join("-", ["from", var.workspace.name, "to", "internet"])
   description = "Default route from the packer instance to the internet."
 
   network          = google_compute_network.network.name
   dest_range       = "0.0.0.0/0"
   next_hop_gateway = "default-internet-gateway"
   priority         = 1000
-  tags             = [var.name]
+  tags             = [var.workspace.name]
 }
 
 resource "google_compute_firewall" "to_front" {
-  name        = join("-", ["allow", "from", "any", "to", var.name, "tcp", "22"])
-  description = "Allow requests from the internet to the ${var.name} packer instance."
+  name        = join("-", ["allow", "from", "any", "to", var.workspace.name, "tcp", "22"])
+  description = "Allow requests from the internet to the ${var.workspace.name} packer instance."
 
   network   = google_compute_network.network.id
   direction = "INGRESS"
@@ -94,5 +94,5 @@ resource "google_compute_firewall" "to_front" {
   }
 
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = [var.name]
+  target_tags   = [var.workspace.name]
 }

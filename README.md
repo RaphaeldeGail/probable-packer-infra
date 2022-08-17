@@ -52,9 +52,7 @@ No modules.
 
 | Name | Description | Type | Default |
 |------|-------------|------|---------|
-| name | The **name** of the packer build that will be used for reference. Only lowercase letters are allowed. | `string` | n/a |
-| project | The GCP **project** that will be used to create the packer build infra. | `string` | n/a |
-| region | The GCP **region** that will be used to create the packer build network. | `string` | n/a |
+| workspace | The workspace that will be created on GCP. Requires the **name** of the build (e.g "bounce"), the ID of a GCP **project** and the **region** of deployment on GCP. The **name** attributes must contain only lowercase letters. | ```object({ name = string project = string region = string })``` | n/a |
 
 ## Outputs
 
